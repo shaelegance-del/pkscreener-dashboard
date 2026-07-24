@@ -49,10 +49,20 @@ function generateIntradayData(minPrice, maxPrice, minVolume) {
         const low = ltp * (1 - Math.random() * 0.02);
         const volume = Math.floor(Math.random() * 500000 + minVolume);
         
+        // Calculate Entry, Target, Stop Loss
+        const entry = ltp;
+        const target = change > 0 ? (ltp * 1.02).toFixed(2) : (ltp * 0.98).toFixed(2);
+        const stopLoss = change > 0 ? (ltp * 0.99).toFixed(2) : (ltp * 1.01).toFixed(2);
+        const rr = ((parseFloat(target) - parseFloat(entry)) / (parseFloat(entry) - parseFloat(stopLoss))).toFixed(2);
+        
         return {
             stock,
             ltp: ltp.toFixed(2),
             change: change.toFixed(2),
+            entry: entry.toFixed(2),
+            target: target,
+            stopLoss: stopLoss,
+            rr: `1:${rr}`,
             volume: volume.toLocaleString(),
             high: high.toFixed(2),
             low: low.toFixed(2),
@@ -76,14 +86,15 @@ function displayIntradayResults(data) {
             <td class="${parseFloat(row.change) > 0 ? 'trend-up' : 'trend-down'}">
                 ${row.change > 0 ? '+' : ''}${row.change}%
             </td>
-            <td>${row.volume}</td>
-            <td>₹${row.high}</td>
-            <td>₹${row.low}</td>
+            <td class="entry-price">₹${row.entry}</td>
+            <td class="target-price">₹${row.target}</td>
+            <td class="sl-price">₹${row.stopLoss}</td>
+            <td><strong>${row.rr}</strong></td>
             <td><span class="${signalClass}">${row.signal}</span></td>
             <td>
                 <div class="action-cell">
                     <button onclick="viewChart('${row.stock}')">Chart</button>
-                    <button onclick="addToWatchlist('${row.stock}')">Watch</button>
+                    <button onclick="copyTrade('${row.stock}', '${row.entry}', '${row.target}', '${row.stopLoss}')">Copy</button>
                 </div>
             </td>
         `;
@@ -126,12 +137,22 @@ function generateSwingData(minPrice, rsi, trend) {
                 return null;
             }
 
+            const ltp = minPrice + Math.random() * 500;
+            const entry = ltp;
+            const target = isUptrend ? (ltp * 1.03).toFixed(2) : (ltp * 0.97).toFixed(2);
+            const stopLoss = isUptrend ? (ltp * 0.98).toFixed(2) : (ltp * 1.02).toFixed(2);
+            const rr = ((parseFloat(target) - parseFloat(entry)) / (parseFloat(entry) - parseFloat(stopLoss))).toFixed(2);
+            
             const support = minPrice + Math.random() * 100;
             const resistance = support * (1 + Math.random() * 0.1);
 
             return {
                 stock,
-                ltp: (minPrice + Math.random() * 500).toFixed(2),
+                ltp: ltp.toFixed(2),
+                entry: entry.toFixed(2),
+                target: target,
+                stopLoss: stopLoss,
+                rr: `1:${rr}`,
                 change5d: change5d.toFixed(2),
                 rsi: stockRSI.toFixed(1),
                 trend: trendStr,
@@ -153,17 +174,16 @@ function displaySwingResults(data) {
         tr.innerHTML = `
             <td><strong>${row.stock}</strong></td>
             <td>₹${row.ltp}</td>
-            <td class="${parseFloat(row.change5d) > 0 ? 'trend-up' : 'trend-down'}">
-                ${row.change5d > 0 ? '+' : ''}${row.change5d}%
-            </td>
+            <td class="entry-price">₹${row.entry}</td>
+            <td class="target-price">₹${row.target}</td>
+            <td class="sl-price">₹${row.stopLoss}</td>
+            <td><strong>${row.rr}</strong></td>
             <td>${row.rsi}</td>
             <td class="${trendClass}"><strong>${row.trend}</strong></td>
-            <td>₹${row.support}</td>
-            <td>₹${row.resistance}</td>
             <td>
                 <div class="action-cell">
                     <button onclick="viewChart('${row.stock}')">Chart</button>
-                    <button onclick="addAlert('${row.stock}')">Alert</button>
+                    <button onclick="copyTrade('${row.stock}', '${row.entry}', '${row.target}', '${row.stopLoss}')">Copy</button>
                 </div>
             </td>
         `;
@@ -194,16 +214,22 @@ function generateBTSTData(expectedMove, liquidity, expiry) {
 
     return stocks.map(stock => {
         const price = 100 + Math.random() * 3000;
-        const range = (Math.random() * 2 + expectedMove).toFixed(2);
         const setup = Math.random() > 0.5 ? 'Breakout Gap Up' : 'Support Bounce';
         const liquidity_cr = Math.floor(Math.random() * 500 + liquidity);
+        
+        const entry = price;
+        const target = (price * (1 + expectedMove / 100)).toFixed(2);
+        const stopLoss = (price * (1 - expectedMove / 100 * 0.5)).toFixed(2);
+        const rr = ((parseFloat(target) - parseFloat(entry)) / (parseFloat(entry) - parseFloat(stopLoss))).toFixed(2);
 
         return {
             stock,
             price: price.toFixed(2),
-            range: `${price.toFixed(2)} - ${(price * 1.02).toFixed(2)}`,
+            entry: entry.toFixed(2),
+            target: target,
+            stopLoss: stopLoss,
+            rr: `1:${rr}`,
             setup: setup,
-            expectedMove: `${range}%`,
             liquidity: liquidity_cr,
             setupType: setup,
             signal: 'BTST Setup'
@@ -221,15 +247,16 @@ function displayBTSTResults(data) {
         tr.innerHTML = `
             <td><strong>${row.stock}</strong></td>
             <td>₹${row.price}</td>
-            <td>${row.range}</td>
+            <td class="entry-price">₹${row.entry}</td>
+            <td class="target-price">₹${row.target}</td>
+            <td class="sl-price">₹${row.stopLoss}</td>
+            <td><strong>${row.rr}</strong></td>
             <td>${row.setup}</td>
-            <td class="trend-up"><strong>${row.expectedMove}</strong></td>
             <td>₹${row.liquidity} Cr</td>
-            <td><span class="signal-buy">${row.setupType}</span></td>
             <td>
                 <div class="action-cell">
                     <button onclick="viewChart('${row.stock}')">Chart</button>
-                    <button onclick="addToPortfolio('${row.stock}')">Add</button>
+                    <button onclick="copyTrade('${row.stock}', '${row.entry}', '${row.target}', '${row.stopLoss}')">Copy</button>
                 </div>
             </td>
         `;
@@ -267,31 +294,36 @@ function generateNFOData(underlying, strategy, expiry) {
             name: 'Long Strangle',
             entry: (current * 0.02).toFixed(2),
             target: (current * 0.05).toFixed(2),
-            sl: (current * 0.01).toFixed(2)
+            sl: (current * 0.01).toFixed(2),
+            maxProfit: (current * 0.03).toFixed(2)
         },
         'straddle': {
             name: 'Long Straddle',
             entry: (current * 0.03).toFixed(2),
             target: (current * 0.06).toFixed(2),
-            sl: (current * 0.015).toFixed(2)
+            sl: (current * 0.015).toFixed(2),
+            maxProfit: (current * 0.045).toFixed(2)
         },
         'call': {
             name: 'Call Spread',
             entry: (current * 0.015).toFixed(2),
             target: (current * 0.035).toFixed(2),
-            sl: (current * 0.008).toFixed(2)
+            sl: (current * 0.008).toFixed(2),
+            maxProfit: (current * 0.02).toFixed(2)
         },
         'put': {
             name: 'Put Spread',
             entry: (current * 0.015).toFixed(2),
             target: (current * 0.035).toFixed(2),
-            sl: (current * 0.008).toFixed(2)
+            sl: (current * 0.008).toFixed(2),
+            maxProfit: (current * 0.02).toFixed(2)
         },
         'iron_condor': {
             name: 'Iron Condor',
             entry: (current * 0.01).toFixed(2),
             target: (current * 0.025).toFixed(2),
-            sl: (current * 0.02).toFixed(2)
+            sl: (current * 0.02).toFixed(2),
+            maxProfit: (current * 0.015).toFixed(2)
         }
     };
 
@@ -308,7 +340,8 @@ function generateNFOData(underlying, strategy, expiry) {
         entry: stratData.entry,
         target: stratData.target,
         sl: stratData.sl,
-        rr: `1:${rr}`
+        rr: `1:${rr}`,
+        maxProfit: stratData.maxProfit
     }];
 }
 
@@ -323,14 +356,15 @@ function displayNFOResults(data) {
             <td><strong>${row.underlying}</strong></td>
             <td>₹${row.currentPrice}</td>
             <td>${row.strategy}</td>
-            <td>₹${row.entry}</td>
-            <td class="trend-up">₹${row.target}</td>
-            <td class="trend-down">₹${row.sl}</td>
+            <td class="entry-price">₹${row.entry}</td>
+            <td class="target-price">₹${row.target}</td>
+            <td class="sl-price">₹${row.sl}</td>
             <td><strong>${row.rr}</strong></td>
+            <td class="profit-price">₹${row.maxProfit}</td>
             <td>
                 <div class="action-cell">
                     <button onclick="viewGreeks('${row.underlying}')">Greeks</button>
-                    <button onclick="addTrade('${row.underlying}')">Trade</button>
+                    <button onclick="copyTrade('${row.underlying}', '${row.entry}', '${row.target}', '${row.sl}')">Copy</button>
                 </div>
             </td>
         `;
@@ -356,6 +390,13 @@ function updateLastUpdate() {
 function viewChart(stock) {
     alert(`Opening chart for ${stock}...\n\nIn production, this would open TradingView or similar.`);
     showNotification(`Chart opened for ${stock}`, 'info');
+}
+
+function copyTrade(stock, entry, target, sl) {
+    const tradeInfo = `Stock: ${stock}\nEntry: ₹${entry}\nTarget: ₹${target}\nStop Loss: ₹${sl}`;
+    navigator.clipboard.writeText(tradeInfo);
+    showNotification(`Trade setup copied: ${stock}`, 'success');
+    alert(tradeInfo);
 }
 
 function addToWatchlist(stock) {
@@ -401,7 +442,7 @@ function savePortfolio() {
 }
 
 function exportData() {
-    const csv = "Stock,Type,Date,Value\nRELIANCE,BUY,2026-07-24,2850\nTCS,SELL,2026-07-24,3500";
+    const csv = "Stock,Entry,Target,StopLoss,RR,Date\nRELIANCE,2850,2904,2815,1:1.89,2026-07-24\nTCS,3500,3605,3430,1:1.88,2026-07-24";
     const blob = new Blob([csv], { type: 'text/csv' });
     const url = window.URL.createObjectURL(blob);
     const a = document.createElement('a');
@@ -427,12 +468,13 @@ function showNotification(message, type = 'info') {
         bottom: 20px;
         right: 20px;
         padding: 15px 25px;
-        background: ${type === 'success' ? '#16a34a' : '#1e40af'};
+        background: ${type === 'success' ? '#16a34a' : type === 'danger' ? '#dc2626' : '#1e40af'};
         color: white;
         border-radius: 8px;
         box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
         z-index: 1000;
         animation: slideIn 0.3s ease;
+        font-weight: 500;
     `;
     notification.textContent = message;
     document.body.appendChild(notification);
@@ -478,6 +520,38 @@ document.addEventListener('keydown', (e) => {
 // Add animation styles
 const style = document.createElement('style');
 style.textContent = `
+    .entry-price {
+        background: #e0f2fe;
+        color: #0369a1;
+        padding: 4px 8px;
+        border-radius: 4px;
+        font-weight: 600;
+    }
+    
+    .target-price {
+        background: #dcfce7;
+        color: #16a34a;
+        padding: 4px 8px;
+        border-radius: 4px;
+        font-weight: 600;
+    }
+    
+    .sl-price {
+        background: #fee2e2;
+        color: #dc2626;
+        padding: 4px 8px;
+        border-radius: 4px;
+        font-weight: 600;
+    }
+    
+    .profit-price {
+        background: #f3e8ff;
+        color: #7c3aed;
+        padding: 4px 8px;
+        border-radius: 4px;
+        font-weight: 600;
+    }
+    
     @keyframes slideIn {
         from {
             transform: translateX(400px);

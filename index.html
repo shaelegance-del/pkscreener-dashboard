@@ -43,7 +43,7 @@
             <section id="intraday" class="tab-content active">
                 <div class="section-header">
                     <h2>Intraday Scanner</h2>
-                    <p>Real-time NSE stocks with high volume and momentum</p>
+                    <p>Real-time NSE stocks with high volume and momentum - Entry, Target & Stop Loss</p>
                 </div>
                 
                 <div class="controls">
@@ -74,15 +74,16 @@
                                 <th>Stock</th>
                                 <th>LTP (₹)</th>
                                 <th>Change %</th>
-                                <th>Volume</th>
-                                <th>High</th>
-                                <th>Low</th>
+                                <th>Entry (₹)</th>
+                                <th>Target (₹)</th>
+                                <th>Stop Loss (₹)</th>
+                                <th>R:R Ratio</th>
                                 <th>Signal</th>
                                 <th>Action</th>
                             </tr>
                         </thead>
                         <tbody id="intradayData">
-                            <tr><td colspan="8" class="no-data">No data available. Click "Scan Now" to start.</td></tr>
+                            <tr><td colspan="9" class="no-data">No data available. Click "Scan Now" to start.</td></tr>
                         </tbody>
                     </table>
                 </div>
@@ -92,7 +93,7 @@
             <section id="swing" class="tab-content">
                 <div class="section-header">
                     <h2>Swing Trading Scanner</h2>
-                    <p>3-5 day trend following opportunities (NSE Stocks & Options)</p>
+                    <p>3-5 day trend following opportunities with Entry, Target & Stop Loss</p>
                 </div>
 
                 <div class="controls">
@@ -126,16 +127,17 @@
                             <tr>
                                 <th>Stock</th>
                                 <th>LTP (₹)</th>
-                                <th>5D Change %</th>
+                                <th>Entry (₹)</th>
+                                <th>Target (₹)</th>
+                                <th>Stop Loss (₹)</th>
+                                <th>R:R Ratio</th>
                                 <th>RSI (14)</th>
                                 <th>Trend</th>
-                                <th>Support</th>
-                                <th>Resistance</th>
                                 <th>Action</th>
                             </tr>
                         </thead>
                         <tbody id="swingData">
-                            <tr><td colspan="8" class="no-data">No data available. Click "Scan Now" to start.</td></tr>
+                            <tr><td colspan="9" class="no-data">No data available. Click "Scan Now" to start.</td></tr>
                         </tbody>
                     </table>
                 </div>
@@ -145,7 +147,7 @@
             <section id="btst" class="tab-content">
                 <div class="section-header">
                     <h2>BTST Scanner (Buy Today, Sell Tomorrow)</h2>
-                    <p>Overnight holding opportunities with lower risk</p>
+                    <p>Overnight holdings with Entry, Target & Stop Loss for defined risk</p>
                 </div>
 
                 <div class="controls">
@@ -178,17 +180,18 @@
                         <thead>
                             <tr>
                                 <th>Stock</th>
-                                <th>Price (₹)</th>
-                                <th>Intraday Range</th>
+                                <th>Current Price (₹)</th>
+                                <th>Entry (₹)</th>
+                                <th>Target (₹)</th>
+                                <th>Stop Loss (₹)</th>
+                                <th>R:R Ratio</th>
                                 <th>Gap Setup</th>
-                                <th>Expected Move</th>
                                 <th>Liquidity (Cr)</th>
-                                <th>Setup Type</th>
                                 <th>Action</th>
                             </tr>
                         </thead>
                         <tbody id="btstData">
-                            <tr><td colspan="8" class="no-data">No data available. Click "Scan Now" to start.</td></tr>
+                            <tr><td colspan="9" class="no-data">No data available. Click "Scan Now" to start.</td></tr>
                         </tbody>
                     </table>
                 </div>
@@ -198,7 +201,7 @@
             <section id="nfo" class="tab-content">
                 <div class="section-header">
                     <h2>NFO Options Scanner</h2>
-                    <p>Index & Stock Options - Calls & Puts Strategy Builder</p>
+                    <p>Index & Stock Options with Entry Price, Target & Stop Loss</p>
                 </div>
 
                 <div class="controls">
@@ -244,15 +247,16 @@
                                 <th>Underlying</th>
                                 <th>Current Price</th>
                                 <th>Strategy</th>
-                                <th>Entry Price</th>
-                                <th>Target</th>
-                                <th>SL</th>
+                                <th>Entry Price (₹)</th>
+                                <th>Target (₹)</th>
+                                <th>Stop Loss (₹)</th>
                                 <th>Risk/Reward</th>
+                                <th>Max Profit</th>
                                 <th>Action</th>
                             </tr>
                         </thead>
                         <tbody id="nfoData">
-                            <tr><td colspan="8" class="no-data">No data available. Click "Scan Now" to start.</td></tr>
+                            <tr><td colspan="9" class="no-data">No data available. Click "Scan Now" to start.</td></tr>
                         </tbody>
                     </table>
                 </div>
@@ -310,11 +314,14 @@
                     <div class="info-box">
                         <h4>💡 Tips for Better Results:</h4>
                         <ul>
+                            <li><strong>Entry Price:</strong> Optimal price to enter the trade (market price or limit)</li>
+                            <li><strong>Target Price:</strong> Profit-taking level where you exit with gains</li>
+                            <li><strong>Stop Loss:</strong> Risk management level to exit if trade goes wrong</li>
+                            <li><strong>R:R Ratio:</strong> Risk-Reward ratio (Target-Entry)/(Entry-SL) - Min 1:2</li>
                             <li>Intraday: Best used with 1-5 min candles during market hours (9:15 AM - 3:30 PM)</li>
                             <li>Swing: Review with 4hr or daily charts for confirmation</li>
                             <li>BTST: Check previous day close & gap analysis</li>
-                            <li>NFO: Use options Greeks calculator for better risk management</li>
-                            <li>Always use stop loss and maintain risk:reward ratio of at least 1:2</li>
+                            <li>Never risk more than 2% of capital per trade</li>
                         </ul>
                     </div>
                 </div>

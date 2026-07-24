@@ -26,7 +26,7 @@ body {
 }
 
 .container {
-    max-width: 1400px;
+    max-width: 1600px;
     margin: 0 auto;
     background: var(--light);
     min-height: 100vh;
@@ -243,7 +243,7 @@ body {
 .scanner-table {
     width: 100%;
     border-collapse: collapse;
-    font-size: 0.95rem;
+    font-size: 0.9rem;
 }
 
 .scanner-table thead {
@@ -256,6 +256,7 @@ body {
     padding: 15px 12px;
     text-align: left;
     border-bottom: 2px solid var(--border);
+    font-size: 0.85rem;
 }
 
 .scanner-table td {
@@ -414,16 +415,18 @@ body {
 
 .info-box li {
     color: var(--text);
-    margin-bottom: 8px;
+    margin-bottom: 10px;
     padding-left: 24px;
     position: relative;
+    font-size: 0.95rem;
+    line-height: 1.4;
 }
 
 .info-box li:before {
-    content: "✓";
+    content: "→";
     position: absolute;
     left: 0;
-    color: var(--success);
+    color: var(--primary);
     font-weight: bold;
 }
 
@@ -491,12 +494,12 @@ body {
     }
 
     .scanner-table {
-        font-size: 0.85rem;
+        font-size: 0.8rem;
     }
 
     .scanner-table th,
     .scanner-table td {
-        padding: 10px 8px;
+        padding: 8px 4px;
     }
 
     .main-content {
