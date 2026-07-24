@@ -1,1 +1,333 @@
-Add index.html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PKScreener - NSE/NFO Scanner Dashboard</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <h1><i class="fas fa-chart-line"></i> PKScreener Dashboard</h1>
+                <p>NSE | NFO | Intraday | Swing | BTST Scanner</p>
+            </div>
+        </header>
+
+        <!-- Navigation Tabs -->
+        <nav class="nav-tabs">
+            <button class="tab-btn active" data-tab="intraday">
+                <i class="fas fa-bolt"></i> Intraday
+            </button>
+            <button class="tab-btn" data-tab="swing">
+                <i class="fas fa-wave-square"></i> Swing
+            </button>
+            <button class="tab-btn" data-tab="btst">
+                <i class="fas fa-sync"></i> BTST
+            </button>
+            <button class="tab-btn" data-tab="nfo">
+                <i class="fas fa-futbol"></i> NFO Options
+            </button>
+            <button class="tab-btn" data-tab="settings">
+                <i class="fas fa-cog"></i> Settings
+            </button>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            
+            <!-- Intraday Scanner -->
+            <section id="intraday" class="tab-content active">
+                <div class="section-header">
+                    <h2>Intraday Scanner</h2>
+                    <p>Real-time NSE stocks with high volume and momentum</p>
+                </div>
+                
+                <div class="controls">
+                    <div class="filter-group">
+                        <label>Min Price (₹)</label>
+                        <input type="number" id="intradayMinPrice" value="50" min="0">
+                    </div>
+                    <div class="filter-group">
+                        <label>Max Price (₹)</label>
+                        <input type="number" id="intradayMaxPrice" value="5000" min="0">
+                    </div>
+                    <div class="filter-group">
+                        <label>Min Volume</label>
+                        <input type="number" id="intradayMinVolume" value="100000" min="0">
+                    </div>
+                    <button class="scan-btn" onclick="scanIntraday()">
+                        <i class="fas fa-search"></i> Scan Now
+                    </button>
+                    <button class="refresh-btn" onclick="refreshIntraday()">
+                        <i class="fas fa-sync"></i>
+                    </button>
+                </div>
+
+                <div class="results-container">
+                    <table class="scanner-table" id="intradayTable">
+                        <thead>
+                            <tr>
+                                <th>Stock</th>
+                                <th>LTP (₹)</th>
+                                <th>Change %</th>
+                                <th>Volume</th>
+                                <th>High</th>
+                                <th>Low</th>
+                                <th>Signal</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="intradayData">
+                            <tr><td colspan="8" class="no-data">No data available. Click "Scan Now" to start.</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Swing Scanner -->
+            <section id="swing" class="tab-content">
+                <div class="section-header">
+                    <h2>Swing Trading Scanner</h2>
+                    <p>3-5 day trend following opportunities (NSE Stocks & Options)</p>
+                </div>
+
+                <div class="controls">
+                    <div class="filter-group">
+                        <label>Min Price (₹)</label>
+                        <input type="number" id="swingMinPrice" value="100" min="0">
+                    </div>
+                    <div class="filter-group">
+                        <label>5-Day RSI Min</label>
+                        <input type="number" id="swingRSI" value="40" min="0" max="100">
+                    </div>
+                    <div class="filter-group">
+                        <label>Trend</label>
+                        <select id="swingTrend">
+                            <option value="up">Uptrend</option>
+                            <option value="down">Downtrend</option>
+                            <option value="all">All</option>
+                        </select>
+                    </div>
+                    <button class="scan-btn" onclick="scanSwing()">
+                        <i class="fas fa-search"></i> Scan Now
+                    </button>
+                    <button class="refresh-btn" onclick="refreshSwing()">
+                        <i class="fas fa-sync"></i>
+                    </button>
+                </div>
+
+                <div class="results-container">
+                    <table class="scanner-table" id="swingTable">
+                        <thead>
+                            <tr>
+                                <th>Stock</th>
+                                <th>LTP (₹)</th>
+                                <th>5D Change %</th>
+                                <th>RSI (14)</th>
+                                <th>Trend</th>
+                                <th>Support</th>
+                                <th>Resistance</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="swingData">
+                            <tr><td colspan="8" class="no-data">No data available. Click "Scan Now" to start.</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- BTST Scanner -->
+            <section id="btst" class="tab-content">
+                <div class="section-header">
+                    <h2>BTST Scanner (Buy Today, Sell Tomorrow)</h2>
+                    <p>Overnight holding opportunities with lower risk</p>
+                </div>
+
+                <div class="controls">
+                    <div class="filter-group">
+                        <label>Expected Move %</label>
+                        <input type="number" id="btstMove" value="2" min="0" max="10" step="0.5">
+                    </div>
+                    <div class="filter-group">
+                        <label>Min Liquidity (₹ Cr)</label>
+                        <input type="number" id="btstLiquidity" value="50" min="0">
+                    </div>
+                    <div class="filter-group">
+                        <label>Time to Expiry</label>
+                        <select id="btstExpiry">
+                            <option value="1">1 Day</option>
+                            <option value="5">5 Days</option>
+                            <option value="all">All</option>
+                        </select>
+                    </div>
+                    <button class="scan-btn" onclick="scanBTST()">
+                        <i class="fas fa-search"></i> Scan Now
+                    </button>
+                    <button class="refresh-btn" onclick="refreshBTST()">
+                        <i class="fas fa-sync"></i>
+                    </button>
+                </div>
+
+                <div class="results-container">
+                    <table class="scanner-table" id="btstTable">
+                        <thead>
+                            <tr>
+                                <th>Stock</th>
+                                <th>Price (₹)</th>
+                                <th>Intraday Range</th>
+                                <th>Gap Setup</th>
+                                <th>Expected Move</th>
+                                <th>Liquidity (Cr)</th>
+                                <th>Setup Type</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="btstData">
+                            <tr><td colspan="8" class="no-data">No data available. Click "Scan Now" to start.</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- NFO Options Scanner -->
+            <section id="nfo" class="tab-content">
+                <div class="section-header">
+                    <h2>NFO Options Scanner</h2>
+                    <p>Index & Stock Options - Calls & Puts Strategy Builder</p>
+                </div>
+
+                <div class="controls">
+                    <div class="filter-group">
+                        <label>Index/Stock</label>
+                        <select id="nfoUnderlying">
+                            <option value="NIFTY">NIFTY 50</option>
+                            <option value="FINNIFTY">FINNIFTY 50</option>
+                            <option value="BANKNIFTY">BANK NIFTY</option>
+                            <option value="RELIANCE">RELIANCE</option>
+                            <option value="TCS">TCS</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label>Strategy</label>
+                        <select id="nfoStrategy">
+                            <option value="strangle">Strangle</option>
+                            <option value="straddle">Straddle</option>
+                            <option value="call">Call Spread</option>
+                            <option value="put">Put Spread</option>
+                            <option value="iron_condor">Iron Condor</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label>Expiry</label>
+                        <select id="nfoExpiry">
+                            <option value="weekly">Weekly</option>
+                            <option value="monthly">Monthly</option>
+                        </select>
+                    </div>
+                    <button class="scan-btn" onclick="scanNFO()">
+                        <i class="fas fa-search"></i> Scan Now
+                    </button>
+                    <button class="refresh-btn" onclick="refreshNFO()">
+                        <i class="fas fa-sync"></i>
+                    </button>
+                </div>
+
+                <div class="results-container">
+                    <table class="scanner-table" id="nfoTable">
+                        <thead>
+                            <tr>
+                                <th>Underlying</th>
+                                <th>Current Price</th>
+                                <th>Strategy</th>
+                                <th>Entry Price</th>
+                                <th>Target</th>
+                                <th>SL</th>
+                                <th>Risk/Reward</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="nfoData">
+                            <tr><td colspan="8" class="no-data">No data available. Click "Scan Now" to start.</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Settings -->
+            <section id="settings" class="tab-content">
+                <div class="section-header">
+                    <h2>Settings & Configuration</h2>
+                </div>
+
+                <div class="settings-container">
+                    <div class="setting-group">
+                        <h3>API Configuration</h3>
+                        <label>Data Source</label>
+                        <select id="apiSource">
+                            <option value="demo">Demo Data (Sample)</option>
+                            <option value="yfinance">Yahoo Finance</option>
+                            <option value="custom">Custom API</option>
+                        </select>
+                        <p class="helper-text">Currently using Demo Data. To enable live data, configure API key below.</p>
+                    </div>
+
+                    <div class="setting-group">
+                        <h3>Notification Settings</h3>
+                        <label>
+                            <input type="checkbox" id="enableNotifications" checked>
+                            Enable Desktop Notifications
+                        </label>
+                        <label>
+                            <input type="checkbox" id="enableSound" checked>
+                            Enable Sound Alerts
+                        </label>
+                    </div>
+
+                    <div class="setting-group">
+                        <h3>Portfolio Tracking</h3>
+                        <label>Portfolio Name</label>
+                        <input type="text" id="portfolioName" placeholder="My Portfolio">
+                        <button class="action-btn" onclick="savePortfolio()">
+                            <i class="fas fa-save"></i> Save Portfolio
+                        </button>
+                    </div>
+
+                    <div class="setting-group">
+                        <h3>Data Management</h3>
+                        <button class="action-btn" onclick="exportData()">
+                            <i class="fas fa-download"></i> Export Data (CSV)
+                        </button>
+                        <button class="action-btn danger" onclick="clearCache()">
+                            <i class="fas fa-trash"></i> Clear Cache
+                        </button>
+                    </div>
+
+                    <div class="info-box">
+                        <h4>💡 Tips for Better Results:</h4>
+                        <ul>
+                            <li>Intraday: Best used with 1-5 min candles during market hours (9:15 AM - 3:30 PM)</li>
+                            <li>Swing: Review with 4hr or daily charts for confirmation</li>
+                            <li>BTST: Check previous day close & gap analysis</li>
+                            <li>NFO: Use options Greeks calculator for better risk management</li>
+                            <li>Always use stop loss and maintain risk:reward ratio of at least 1:2</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p>⚠️ Disclaimer: This is a scanner tool for educational purposes. Always do your own research before trading. Past performance is not indicative of future results.</p>
+            <p>Last Updated: <span id="lastUpdate">Never</span> | Data Source: Demo/Sample</p>
+        </footer>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
